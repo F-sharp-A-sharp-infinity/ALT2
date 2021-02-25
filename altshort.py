@@ -1,12 +1,11 @@
 import csv  # csv library makes going through data a lot easier
-import matplotlib.pyplot as plt  # plotting library
-import statistics  # statistics library
+import matplotlib.pyplot as plt  # plotting library for chart
+import statistics  # statistics library for median and mode
 start_of_week = 1595795742  # sets initial unix time for the start of the first week (hardcoded)
-week_list = [start_of_week]  # makes a week list that never gets used
 art_dict = dict()  # makes the empty master dictionary
 
-with open('lastfmalt.csv', newline='', encoding="utf-8") as f:  # opening the csv file
-    reader = csv.reader(f)  # using the csv library to set up a reader option which...
+with open('lastfmalt.csv', newline='', encoding="utf-8") as file:  # opening the csv file
+    reader = csv.reader(file)  # using the csv library to set up a reader option which...
     for row in reader:  # we can go through row by row with this for statement. each row is a list
         if row[1] == "":  # checking this item isn't null avoids errors, if it is we just skip the row
             pass  # does nothing, which is what we want
@@ -16,7 +15,6 @@ with open('lastfmalt.csv', newline='', encoding="utf-8") as f:  # opening the cs
                     if not art_values.keys().__contains__(start_of_week):  # if the artist doesn't have a key for this week
                         art_dict[artist][start_of_week] = 0  # make a key for the week with zero plays
                 start_of_week += 604800  # update the start of the week
-                week_list.append(start_of_week)  # add it to the week list
             if row[0] in art_dict.keys():  # if the artist is already in our dictionary of artists
                 if list(art_dict[row[0]].keys())[-1] == start_of_week:  # if the last key added to the artist is the same as the current start of week
                     art_dict[row[0]][start_of_week] += 1  # increase that key/week's plays by one
@@ -37,7 +35,7 @@ for artist, weeks in art_dict.items():  # go through every artist and their asso
         art_total += i  # adds them to the artist total
     artist_mean_total += art_total  # adds the current artist's total to the total for the mean plays
     artist_median_dict[artist] = art_total  # adds the current artist and their total to the dictionary for median plays
-    if art_total >= 179:  # play around with this value to display a good amount of artists
+    if art_total >= 100:  # play around with this value to display a good amount of artists
         plt.plot(weeks.keys(), weeks.values(), label=artist)  # plots current artist on the line chart and adds their name to the legend
         top_artist_dict[artist] = art_total  # adds the artist to the top artist dictionary
     elif art_total >= 50:  # comment this and the next line out to just see top artists
